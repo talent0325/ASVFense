@@ -53,7 +53,7 @@ export default function Home() {
               智御声纹
             </h1>
             <h2 className="w-[216px] h-[55px] font-['Microsoft_YaHei'] font-bold text-[42px] leading-[55px] text-[#655DE6]">
-              Voice Fort
+              ASVFense
             </h2>
           </div>
           

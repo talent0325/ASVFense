@@ -27,7 +27,7 @@ export default function Navigation() {
           
         />
         <h1 className="text-[30px] font-bold tracking-wider bg-gradient-to-r from-[#B224EF] to-[#7579FF] bg-clip-text text-transparent">
-          Voice Fort
+          ASVFense
         </h1>
       </div>
 
