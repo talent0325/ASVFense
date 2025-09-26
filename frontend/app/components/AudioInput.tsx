@@ -61,12 +61,11 @@ export default function AudioInput({ onAudioUrlChange, onReset }: AudioInputProp
       };
 
       recorder.onstop = async () => {
-        // TODO: 在线录音上传失败的原因是前端根本连不上你的后端接口，这里后端写死了
         const audioBlob = new Blob(chunks, { type: 'audio/wav' });  // MediaRecorder 在大多数浏览器下默认输出的是 WebM/Opus
         const formData = new FormData();
         formData.append('audio', audioBlob, 'recorded_audio.wav');
 
-        // TODO: 但要确认后端接口 http://localhost:5000/api/record 是否支持 multipart/form-data。
+
         try {
           const response = await fetch('http://localhost:5000/api/record', {  
             method: 'POST',

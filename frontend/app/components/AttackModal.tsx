@@ -143,7 +143,7 @@ export default function AttackModal({ isOpen, onClose, onAttackAudioSelected }: 
                         // 创建下载链接
                         const link = document.createElement('a');
                         link.href = audioUrl;
-                        link.download = '对抗样本音频.wav';
+                        link.download = '对抗样本音频.wav';   // 把下载下来的所有音频文件都命名为这个固定名字
                         document.body.appendChild(link);
                         link.click();
                         document.body.removeChild(link);
@@ -178,6 +178,7 @@ export default function AttackModal({ isOpen, onClose, onAttackAudioSelected }: 
                     <h2 className="text-[28.8px] font-bold text-[#655DE6] mb-4">频谱图对比</h2>
                     <div className="w-full h-[180px] bg-white rounded-lg flex items-center overflow-hidden">
                       <img 
+                      // TODO: 这里频谱图写死了
                         src="/images/spectrum.png" 
                         alt="频谱图对比" 
                         className="w-full h-full object-contain object-left"

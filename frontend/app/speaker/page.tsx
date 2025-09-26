@@ -33,6 +33,7 @@ export default function SpeakerPage() {
       }
       const data = await response.json();
       // 确保audioUrl是完整的URL
+      // TODO: 新录制的文件在backend\speaker\speakers.json不会出现貌似
       const formattedData = data.map((speaker: Speaker) => ({
         ...speaker,
         audioUrl: speaker.audioUrl.startsWith('http') 
