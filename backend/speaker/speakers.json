@@ -1,1 +1,14 @@
-[{"id": "d06f076c-4b73-4a79-b9a3-9bb925d10463", "audioUrl": "/api/speakers/d06f076c-4b73-4a79-b9a3-9bb925d10463/audio", "model": "ASV1", "filename": "d06f076c-4b73-4a79-b9a3-9bb925d10463_audio.wav"}, {"id": "3387d641-aec9-4556-b76a-6ce88baaa62d", "audioUrl": "/api/speakers/3387d641-aec9-4556-b76a-6ce88baaa62d/audio", "model": "ASV1", "filename": "3387d641-aec9-4556-b76a-6ce88baaa62d_audio.wav"}]
+[
+    {
+        "id": "d06f076c-4b73-4a79-b9a3-9bb925d10463",
+        "audioUrl": "/api/speakers/d06f076c-4b73-4a79-b9a3-9bb925d10463/audio",
+        "model": "ASV1",
+        "filename": "d06f076c-4b73-4a79-b9a3-9bb925d10463_audio.wav"
+    },
+    {
+        "id": "3387d641-aec9-4556-b76a-6ce88baaa62d",
+        "audioUrl": "/api/speakers/3387d641-aec9-4556-b76a-6ce88baaa62d/audio",
+        "model": "ASV1",
+        "filename": "3387d641-aec9-4556-b76a-6ce88baaa62d_audio.wav"
+    }
+]
