@@ -10,8 +10,8 @@ export default function Navigation() {  // React 组件的定义, 默认导出
 
   const menuItems = [
     { id: 'home', label: '首页', icon: HomeIcon, href: '/' },
-    { id: 'intro', label: '技术简介', icon: IntroIcon, href: '/introduction' },
-    { id: 'attack', label: '对抗攻击生成', icon: AttackIcon, href: '/attack' },
+    // { id: 'intro', label: '技术简介', icon: IntroIcon, href: '/introduction' },
+    // { id: 'attack', label: '对抗攻击生成', icon: AttackIcon, href: '/attack' },
     { id: 'defense', label: '可插拔防御演示', icon: DefenseIcon, href: '/defense' },
     { id: 'speaker', label: '说话人管理', icon: SpeakerIcon, href: '/speaker' },
   ];
