@@ -8,6 +8,41 @@ import uuid
 
 api = Blueprint('api', __name__)
 
+# speaker router - 添加数据清理功能 这里有改动
+speakers_db = load_list_from_json(Config.SPEAKER_FOLDER + '/speakers.json')
+# 添加数据清理函数
+def clean_invalid_speakers():
+    """清理数据库中文件不存在的无效记录"""
+    global speakers_db
+    valid_speakers = []
+    removed_count = 0
+    
+    print("=== 开始清理无效说话人记录 ===")
+    
+    for speaker in speakers_db[:]:  # 创建副本避免修改迭代中的列表
+        audio_dir = os.path.join(Config.SPEAKER_FOLDER, 'speaker_audio')
+        filepath = os.path.join(audio_dir, speaker['filename'])
+        
+        if not os.path.exists(filepath):
+            print(f"❌ 清理无效记录: {speaker['id']} - 文件不存在: {filepath}")
+            speakers_db.remove(speaker)
+            removed_count += 1
+        else:
+            valid_speakers.append(speaker)
+    
+    if removed_count > 0:
+        save_list_to_json(valid_speakers, Config.SPEAKER_FOLDER + '/speakers.json')
+        print(f"✅ 清理完成，移除了 {removed_count} 条无效记录")
+        speakers_db = valid_speakers
+    else:
+        print("✅ 没有发现无效记录")
+    
+    print(f"当前有效记录数: {len(speakers_db)}")
+    print("=== 清理完成 ===")
+    return speakers_db
+
+# 启动时自动清理
+speakers_db = clean_invalid_speakers()
 
 @api.route('/api/upload', methods=['POST'])
 def upload_file():
@@ -174,7 +209,7 @@ def defense_test():
 
 
 # speaker router
-speakers_db = load_list_from_json(Config.SPEAKER_FOLDER + '/speakers.json')
+# speakers_db = load_list_from_json(Config.SPEAKER_FOLDER + '/speakers.json')
 
 
 @api.route('/api/speakers', methods=['GET'])
@@ -199,7 +234,9 @@ def add_speaker():
     filename = f"{speaker_id}_{original_filename}"
 
     # 保存文件
-    filepath = os.path.join(Config.SPEAKER_FOLDER+'/speaker_audio', filename)
+    # filepath = os.path.join(Config.SPEAKER_FOLDER+'/speaker_audio', filename) 这里有改动
+    audio_dir = os.path.join(Config.SPEAKER_FOLDER, 'speaker_audio')
+    filepath = os.path.join(audio_dir, filename)
     audio_file.save(filepath)
 
     # 创建说话人记录
@@ -214,7 +251,6 @@ def add_speaker():
     save_list_to_json(speakers_db, Config.SPEAKER_FOLDER + '/speakers.json')
     return jsonify(speaker), 201
 
-
 @api.route('/api/speakers/<speaker_id>/audio', methods=['GET'])
 def get_speaker_audio(speaker_id):
     # 查找说话人记录
@@ -222,8 +258,11 @@ def get_speaker_audio(speaker_id):
     if not speaker:
         return jsonify({'error': '说话人不存在'}), 404
 
-    filepath = os.path.join(Config.SPEAKER_FOLDER +
-                            '/speaker_audio', speaker['filename'])
+    # filepath = os.path.join(Config.SPEAKER_FOLDER +
+    #                         '/speaker_audio', speaker['filename']) 这里有改动
+    # 这里也需要使用正确的路径拼接方式
+    audio_dir = os.path.join(Config.SPEAKER_FOLDER, 'speaker_audio')
+    filepath = os.path.join(audio_dir, speaker['filename'])
     if not os.path.exists(filepath):
         return jsonify({'error': '音频文件不存在'}), 404
     return send_file(filepath, mimetype='audio/wav')
@@ -237,8 +276,11 @@ def delete_speaker(speaker_id):
         return jsonify({'error': '说话人不存在'}), 404
 
     # 删除音频文件
-    filepath = os.path.join(Config.SPEAKER_FOLDER +
-                            '/speaker_audio', speaker['filename'])
+    # filepath = os.path.join(Config.SPEAKER_FOLDER +
+    #                         '/speaker_audio', speaker['filename']) 这里有改动
+    # 这里也需要使用正确的路径拼接方式
+    audio_dir = os.path.join(Config.SPEAKER_FOLDER, 'speaker_audio')
+    filepath = os.path.join(audio_dir, speaker['filename'])
     if os.path.exists(filepath):
         os.remove(filepath)
 
