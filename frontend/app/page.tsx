@@ -53,9 +53,13 @@ export default function Home() { //导出的默认页面组件，访问 / 时会
             <h1 className="w-[224px] h-[74px] font-['Microsoft_YaHei'] font-bold text-[56px] leading-[74px] bg-gradient-to-r from-[#B224EF] to-[#7579FF] text-transparent bg-clip-text whitespace-nowrap">
               智御声纹
             </h1>
-            <h2 className="w-[216px] h-[55px] font-['Microsoft_YaHei'] font-bold text-[42px] leading-[55px] text-[#655DE6]">
+            {/* <h2 className="w-[250px] h-[55px] font-['Microsoft_YaHei'] font-bold text-[42px] leading-[55px] text-[#655DE6]">
               ASV安全卫士
-            </h2>
+            </h2> */}
+            <h2 className="w-[300px] h-[55px] font-['Microsoft_YaHei'] font-bold text-[35px] leading-[55px] text-[#655DE6]">
+  ASV安全卫士
+</h2>
+
           </div>
           
           {/* 中文标语 */}

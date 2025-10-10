@@ -26,7 +26,7 @@ export default function Navigation() {  // React 组件的定义, 默认导出
           height={32}
           
         />
-        <h1 className="text-[30px] font-bold tracking-wider bg-gradient-to-r from-[#B224EF] to-[#7579FF] bg-clip-text text-transparent">
+        <h1 className="text-[25px] font-bold tracking-wider bg-gradient-to-r from-[#B224EF] to-[#7579FF] bg-clip-text text-transparent">
           ASV安全卫士
         </h1>
       </div>
