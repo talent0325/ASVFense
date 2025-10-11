@@ -435,15 +435,26 @@ export default function SpeakerPage() {
                             <p className="text-[16px] text-[#28264D]">尽量在无噪音的环境中录制</p>
                           </>
                         )}
-                        {isRecording && (
+                        {/* {isRecording && (
                           <button
                             onClick={stopRecording}
                             className="mt-4 px-6 py-2 bg-white/20 text-white rounded-lg hover:bg-white/30 transition-colors"
                           >
                             结束录音
                           </button>
-                        )}
+                        )} */}
                       </button>
+
+                      {isRecording && (
+                          <div className="flex justify-center w-full">
+                            <button
+                              onClick={stopRecording}
+                              className="mt-4 px-6 py-2 bg-white/20 text-white rounded-lg hover:bg-white/30 transition-colors"
+                            >
+                              结束录音
+                            </button>
+                          </div>
+                        )}
                     </div>
                   </div>
                 </>
