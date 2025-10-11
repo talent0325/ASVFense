@@ -6,11 +6,12 @@ import Image from 'next/image';
 export default function IntroductionPage() {
   return (
     // min-h-screen：保证页面高度至少为视口高度
-    <div className="min-h-screen relative overflow-hidden">  
+    <div className="min-h-screen relative overflow-hidden">
       {/* 背景图片 */}
       <div className="fixed inset-0 -z-10">
         <Image
-          src="/background2.png"
+          // src="/background2.png"
+          src="/background.png"
           alt="Background"
           fill
           className="object-cover"
