@@ -193,6 +193,7 @@ def defense_test():
         print(data)
         # 模拟处理防御测试
         # 这里应该调用实际的防御和 ASV 系统处理逻辑
+        # TOOD: 写死了
         result = {
             "success": True,
             "message": "防御测试完成",
@@ -223,13 +224,26 @@ def add_speaker():
         return jsonify({'error': '没有上传音频文件'}), 400
 
     audio_file = request.files['audio']
-    model = request.form.get('model', 'ASV1')
+    # TODO: 模型选择
+    model = request.form.get('model', '1D-CNN')
+    custom_id = request.form.get('id', '').strip()  # 获取前端传递的自定义ID
     print(audio_file.filename)
     if audio_file.filename == '':
         return jsonify({'error': '没有选择文件'}), 400
 
-    # 生成唯一ID和文件名
-    speaker_id = str(uuid.uuid4())
+    # 检查ID是否已存在
+    if custom_id:
+        # 如果提供了自定义ID，检查是否已存在
+        existing_speaker = next((s for s in speakers_db if s['id'] == custom_id), None)
+        if existing_speaker:
+            return jsonify({'error': f'说话人ID "{custom_id}" 已存在'}), 400
+        speaker_id = custom_id
+    else:
+        # 如果没有提供自定义ID，生成UUID
+        # speaker_id = str(uuid.uuid4())
+        speaker_id = "no_id"
+
+    # 和文件名
     original_filename = audio_file.filename
     filename = f"{speaker_id}_{original_filename}"
 
@@ -289,6 +303,27 @@ def delete_speaker(speaker_id):
     return jsonify({'message': '删除成功'}), 200
 
 
+# @api.route('/api/speakers/<speaker_id>', methods=['PUT'])
+# def update_speaker(speaker_id):
+#     data = request.json
+#     model = data.get('model')
+#     if not data or 'id' not in data:
+#         return jsonify({'error': '缺少必要字段'}), 400
+
+#     new_id = data['id']
+#     # 检查新ID是否已存在
+#     if any(s['id'] == new_id for s in speakers_db if s['id'] != speaker_id):
+#         return jsonify({'error': '该ID已存在'}), 400
+
+#     # 查找并更新说话人记录
+#     speaker = next((s for s in speakers_db if s['id'] == speaker_id), None)
+#     if not speaker:
+#         return jsonify({'error': '说话人不存在'}), 404
+
+#     # 更新ID
+#     speaker['id'] = new_id
+#     return jsonify(speaker), 200
+
 @api.route('/api/speakers/<speaker_id>', methods=['PUT'])
 def update_speaker(speaker_id):
     data = request.json
@@ -296,15 +331,82 @@ def update_speaker(speaker_id):
         return jsonify({'error': '缺少必要字段'}), 400
 
     new_id = data['id']
-    # 检查新ID是否已存在
+    model = data.get('model')
+    
+    # 检查新ID是否已存在（排除当前说话人）
     if any(s['id'] == new_id for s in speakers_db if s['id'] != speaker_id):
         return jsonify({'error': '该ID已存在'}), 400
 
-    # 查找并更新说话人记录
-    speaker = next((s for s in speakers_db if s['id'] == speaker_id), None)
-    if not speaker:
+    # 查找说话人记录
+    speaker_index = None
+    for i, s in enumerate(speakers_db):
+        if s['id'] == speaker_id:
+            speaker_index = i
+            break
+    
+    if speaker_index is None:
         return jsonify({'error': '说话人不存在'}), 404
 
-    # 更新ID
+    speaker = speakers_db[speaker_index]
+    
+    # 如果ID发生变化，需要重命名文件并更新相关信息
+    if new_id != speaker_id:
+        # 重命名音频文件
+        old_filename = speaker.get('filename', '')
+        if old_filename:
+            try:
+                # 提取原始文件名（去掉旧ID前缀）
+                parts = old_filename.split('_', 1)
+                if len(parts) > 1:
+                    original_filename = parts[1]
+                    new_filename = f"{new_id}_{original_filename}"
+                    
+                    # 重命名文件
+                    old_filepath = os.path.join(Config.SPEAKER_FOLDER, 'speaker_audio', old_filename)
+                    new_filepath = os.path.join(Config.SPEAKER_FOLDER, 'speaker_audio', new_filename)
+                    
+                    print(f"尝试重命名文件: {old_filepath} -> {new_filepath}")
+                    
+                    if os.path.exists(old_filepath):
+                        os.rename(old_filepath, new_filepath)
+                        speaker['filename'] = new_filename
+                        print(f"文件重命名成功: {new_filename}")
+                    else:
+                        print(f"警告: 原文件不存在: {old_filepath}")
+                        # 如果原文件不存在，但仍然更新filename字段
+                        speaker['filename'] = new_filename
+                else:
+                    # 如果文件名格式不符合预期，创建新的文件名
+                    file_extension = os.path.splitext(old_filename)[1]
+                    new_filename = f"{new_id}{file_extension}"
+                    speaker['filename'] = new_filename
+            except Exception as e:
+                print(f"文件重命名错误: {e}")
+                return jsonify({'error': f'文件重命名失败: {str(e)}'}), 500
+        
+        # 更新音频URL
+        speaker['audioUrl'] = f'/api/speakers/{new_id}/audio'
+        print(f"更新音频URL: {speaker['audioUrl']}")
+    
+    # 更新ID和模型
     speaker['id'] = new_id
-    return jsonify(speaker), 200
+    if model:
+        speaker['model'] = model
+    
+    # 保存到JSON文件 - 确保这里正确调用了保存函数
+    try:
+        save_list_to_json(speakers_db, os.path.join(Config.SPEAKER_FOLDER, 'speakers.json'))
+        print("JSON文件保存成功")
+    except Exception as e:
+        print(f"保存JSON文件错误: {e}")
+        return jsonify({'error': f'保存数据失败: {str(e)}'}), 500
+    
+    # 返回更新后的说话人信息（包含完整的音频URL）
+    response_data = {
+        'id': speaker['id'],
+        'audioUrl': f'http://localhost:5000/api/speakers/{speaker["id"]}/audio',
+        'model': speaker.get('model', '1D-CNN'),
+        'filename': speaker.get('filename', '')
+    }
+    
+    return jsonify(response_data), 200

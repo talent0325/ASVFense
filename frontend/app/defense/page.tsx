@@ -44,7 +44,7 @@ export default function DefensePage() {
     const fetchAsvSystems = async () => {
       try {
         // 页面加载时请求后端，获取可用 ASV 系统
-        // TODO: 写死了
+        // TODO: 写死了,未实现
         const response = await fetch('http://localhost:5000/api/asv-systems');
         const data = await response.json();
         if (data.asv_systems) {
@@ -254,7 +254,7 @@ export default function DefensePage() {
 
           {/* ASV系统 */}
           <div className="flex flex-col items-center p-6">
-            <h2 className="text-[28.8px] text-[#655DE6] font-bold mb-6">ASV系统</h2>
+            <h2 className="text-[28.8px] text-[#655DE6] font-bold mb-6">ASV模型</h2>
             <div className="flex flex-col gap-4 w-full">
               {asvSystems.map((asv, index) => (  // 可点击选择当前 ASV 系统 当前选中项高亮显示
                 <div 

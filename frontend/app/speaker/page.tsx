@@ -19,11 +19,23 @@ export default function SpeakerPage() {
   const [isRecording, setIsRecording] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
-  const [selectedModel, setSelectedModel] = useState('ASV1');
+  const [selectedModel, setSelectedModel] = useState('1D-CNN');
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // MARK: modify author:cy
+  // 在组件顶部添加状态来管理新建说话人的ID
+  const [newSpeakerId, setNewSpeakerId] = useState('');
+  // 在组件顶部添加错误状态
+  const [uploadError, setUploadError] = useState<string | null>(null);
+
+  // 在渲染部分添加错误提示
+  {uploadError && (
+    <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+      {uploadError}
+    </div>
+  )}
   // 获取说话人列表
   const fetchSpeakers = async () => {
     try {
@@ -33,13 +45,19 @@ export default function SpeakerPage() {
       }
       const data = await response.json();
       // 确保audioUrl是完整的URL
-      // TODO: 新录制的文件在backend\speaker\speakers.json不会出现貌似
-      const formattedData = data.map((speaker: Speaker) => ({
-        ...speaker,
-        audioUrl: speaker.audioUrl.startsWith('http') 
-          ? speaker.audioUrl 
-          : `http://localhost:5000${speaker.audioUrl}`
-      }));
+      // const formattedData = data.map((speaker: Speaker) => ({
+      //   ...speaker,
+      //   audioUrl: speaker.audioUrl.startsWith('http') 
+      //     ? speaker.audioUrl 
+      //     : `http://localhost:5000${speaker.audioUrl}`
+      // }));
+      // 确保audioUrl是完整的URL
+    const formattedData = data.map((speaker: Speaker) => ({
+      ...speaker,
+      audioUrl: speaker.audioUrl.startsWith('http') 
+        ? speaker.audioUrl 
+        : `http://localhost:5000${speaker.audioUrl.startsWith('/') ? '' : '/'}${speaker.audioUrl}`
+    }));
       setSpeakers(formattedData);
     } catch (err) {
       setError(err instanceof Error ? err.message : '发生未知错误');
@@ -52,61 +70,129 @@ export default function SpeakerPage() {
   useEffect(() => {
     fetchSpeakers();
   }, []);
+  // 修改关闭弹窗的逻辑
+const handleModalClose = () => {
+  setIsModalOpen(false);
+  setNewSpeakerId(''); // 重置新建说话人ID
+  setEditValue(''); // 清空编辑值
+  setAudioUrl(null); // 清空音频URL
+  setEditingId(null); // 重置编辑状态
+};
 
   const handleEdit = (id: string, currentValue: string) => {
     setEditingId(id);
     setEditValue(currentValue);
   };
 
+  // const handleSave = async () => {
+  //   try {
+  //     if (editingId) {
+  //       // 如果ID被修改，先调用更新ID的API
+  //       // TODO: 3
+  //       // TODO: 这里 editingId 已经是选中的 ID，speakers.find(s => s.id === editingId)?.id 会返回同一个值，条件永远不成立，所以 ID更新逻辑永远不会走
+  //       if (editingId !== speakers.find(s => s.id === editingId)?.id) {
+  //         const updateResponse = await fetch(`http://localhost:5000/api/speakers/${speakers.find(s => s.id === editingId)?.id}`, {
+  //           method: 'PUT',
+  //           headers: {
+  //             'Content-Type': 'application/json',
+  //           },
+  //           body: JSON.stringify({ id: editingId }),
+  //         });
+
+  //         if (!updateResponse.ok) {
+  //           const errorData = await updateResponse.json();
+  //           throw new Error(errorData.error || '更新ID失败');
+  //         }
+  //       }
+
+  //       // 更新其他信息
+  //       const response = await fetch(`http://localhost:5000/api/speakers/${editingId}`, {
+  //         method: 'PUT',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //         body: JSON.stringify({ id: editingId, model: selectedModel }),
+  //       });
+
+  //       if (!response.ok) {
+  //         const errorData = await response.json();
+  //         throw new Error(errorData.error || '保存失败');
+  //       }
+
+  //       const updatedSpeaker = await response.json();
+  //       setSpeakers(speakers.map(s => s.id === updatedSpeaker.id ? updatedSpeaker : s));
+  //       setEditingId(null);
+  //       setEditValue('');
+  //     }
+  //   } catch (error) {
+  //     console.error('保存失败:', error);
+  //     alert(error instanceof Error ? error.message : '保存失败');
+  //   }
+  // };
+
   const handleSave = async () => {
-    try {
-      if (editingId) {
-        // 如果ID被修改，先调用更新ID的API
-        // TODO: 3
-        // TODO: 这里 editingId 已经是选中的 ID，speakers.find(s => s.id === editingId)?.id 会返回同一个值，条件永远不成立，所以 ID更新逻辑永远不会走
-        if (editingId !== speakers.find(s => s.id === editingId)?.id) {
-          const updateResponse = await fetch(`http://localhost:5000/api/speakers/${speakers.find(s => s.id === editingId)?.id}`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ id: editingId }),
-          });
-
-          if (!updateResponse.ok) {
-            const errorData = await updateResponse.json();
-            throw new Error(errorData.error || '更新ID失败');
-          }
-        }
-
-        // 更新其他信息
-        const response = await fetch(`http://localhost:5000/api/speakers/${editingId}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ id: editingId, model: selectedModel }),
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || '保存失败');
-        }
-
-        const updatedSpeaker = await response.json();
-        setSpeakers(speakers.map(s => s.id === updatedSpeaker.id ? updatedSpeaker : s));
-        setEditingId(null);
-        setEditValue('');
+  try {
+    if (editingId) {
+      const originalSpeaker = speakers.find(s => s.id === editingId);
+      if (!originalSpeaker) {
+        throw new Error('找不到对应的说话人');
       }
-    } catch (error) {
-      console.error('保存失败:', error);
-      alert(error instanceof Error ? error.message : '保存失败');
+
+      const newId = editValue.trim();
+
+      if (newId === '') {
+        throw new Error('说话人ID不能为空');
+      }
+
+      // 检查新ID是否已存在（除了当前编辑的说话人）
+      if (newId !== editingId) {
+        const idExists = speakers.some(s => s.id === newId && s.id !== editingId);
+        if (idExists) {
+          throw new Error(`说话人ID "${newId}" 已存在`);
+        }
+      }
+
+      // 更新信息
+      const response = await fetch(`http://localhost:5000/api/speakers/${editingId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          id: newId, 
+          model: selectedModel 
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || '保存失败');
+      }
+
+      // 重新获取数据确保音频URL正确
+      await fetchSpeakers();
+      
+      setEditingId(null);
+      setEditValue('');
     }
-  };
+  } catch (error) {
+    console.error('保存失败:', error);
+    alert(error instanceof Error ? error.message : '保存失败');
+  }
+};
 
   const handleNewSpeaker = async () => {
-    if (!audioUrl) return;
-
+    // if (!audioUrl) return;
+    if (!audioUrl) {
+      setError("请提供音频文件")
+      return;  // 确保输入了 ID
+    }
+    // 使用用户输入的自定义ID或默认ID
+    const finalId = newSpeakerId || `000${speakers.length + 1}`;
+    if (!finalId) {
+      setError("请提供说话人ID");
+      return;
+  }
     try {
       const formData = new FormData();
       // 这里需要将audioUrl转换为File对象
@@ -114,6 +200,7 @@ export default function SpeakerPage() {
       const blob = await response.blob();
       formData.append('audio', blob, 'audio.wav');
       formData.append('model', selectedModel);
+      formData.append('id', finalId);  // 将用户输入的 ID 添加到请求中
 
       const uploadResponse = await fetch('http://localhost:5000/api/speakers', {
         method: 'POST',
@@ -126,85 +213,166 @@ export default function SpeakerPage() {
 
       // 重新获取列表
       await fetchSpeakers();
-      setAudioUrl(null);
-      setIsModalOpen(false);
+      // setAudioUrl(null);
+      // setEditValue(''); // 清空输入框
+      // setIsModalOpen(false);
+      handleModalClose(); // 使用统一的关闭函数
     } catch (err) {
       setError(err instanceof Error ? err.message : '上传失败');
     }
   };
 
+  // const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const file = event.target.files?.[0];
+  //   if (file) {
+  //     setIsUploading(true);
+  //     // 模拟上传过程
+  //     setTimeout(() => {
+  //       const url = URL.createObjectURL(file);
+  //       setAudioUrl(url);
+  //       setIsUploading(false);
+  //     }, 1000);
+  //   }
+  // };
+
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
-      setIsUploading(true);
+    if (!file) {
+      setUploadError('请选择文件');
+      return;
+    }
+
+    // 清除之前的错误信息
+    setUploadError(null);
+    setError(null);
+
+    // 文件格式检查
+    const allowedTypes = [
+      'audio/wav', 'audio/wave', 'audio/x-wav', 
+      'audio/mpeg', 'audio/mp3', 
+      'audio/flac', 'audio/x-flac'
+    ];
+    
+    const fileExtension = file.name.split('.').pop()?.toLowerCase();
+    const allowedExtensions = ['wav', 'mp3', 'flac'];
+    
+    const isValidType = allowedTypes.includes(file.type) || 
+                      allowedExtensions.includes(fileExtension || '');
+    
+    if (!isValidType) {
+      setUploadError(`不支持的文件格式: ${file.name}。请上传 WAV、MP3 或 FLAC 格式的音频文件`);
+      event.target.value = '';
+      return;
+    }
+
+    // 文件大小检查 (10MB)
+    const maxSize = 10 * 1024 * 1024;
+    if (file.size > maxSize) {
+      const sizeInMB = (file.size / (1024 * 1024)).toFixed(2);
+      setUploadError(`文件大小 ${sizeInMB}MB 超过限制。请上传小于 10MB 的音频文件`);
+      event.target.value = '';
+      return;
+    }
+
+    // 最小文件大小检查 (10KB，避免无效文件)
+    const minSize = 10 * 1024;
+    if (file.size < minSize) {
+      setUploadError('文件大小过小，可能不是有效的音频文件');
+      event.target.value = '';
+      return;
+    }
+
+    // 文件名长度检查
+    if (file.name.length > 100) {
+      setUploadError('文件名过长，请重命名后上传');
+      event.target.value = '';
+      return;
+    }
+
+    setIsUploading(true);
+
+    // 使用 Promise 处理文件读取
+    new Promise<void>((resolve) => {
       // 模拟上传过程
       setTimeout(() => {
-        const url = URL.createObjectURL(file);
-        setAudioUrl(url);
-        setIsUploading(false);
-      }, 1000);
-    }
-  };
-
-  const startRecording = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
-      mediaRecorderRef.current = mediaRecorder;
-      chunksRef.current = [];
-
-      mediaRecorder.ondataavailable = (e) => {
-        if (e.data.size > 0) {
-          chunksRef.current.push(e.data);
+        try {
+          const url = URL.createObjectURL(file);
+          setAudioUrl(url);
+          resolve();
+        } catch (error) {
+          console.error('文件处理错误:', error);
+          setUploadError('文件处理失败，请重试或选择其他文件');
+          throw error;
         }
-      };
-
-      mediaRecorder.onstop = () => {
-        const blob = new Blob(chunksRef.current, { type: 'audio/wav' });
-        const url = URL.createObjectURL(blob);
-        setAudioUrl(url);
-        setIsRecording(false);
-      };
-
-      mediaRecorder.start();
-      setIsRecording(true);
-    } catch (err) {
-      console.error('Error accessing microphone:', err);
-    }
+      }, 1000);
+    })
+    .catch((error) => {
+      console.error('上传错误:', error);
+    })
+    .finally(() => {
+      setIsUploading(false);
+    });
   };
 
-  const stopRecording = () => {
-    if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.stop();
-      mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
-    }
-  };
+    const startRecording = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const mediaRecorder = new MediaRecorder(stream);
+        mediaRecorderRef.current = mediaRecorder;
+        chunksRef.current = [];
 
-  const handleUploadClick = () => {
-    fileInputRef.current?.click();
-  };
+        mediaRecorder.ondataavailable = (e) => {
+          if (e.data.size > 0) {
+            chunksRef.current.push(e.data);
+          }
+        };
 
-  const handleDelete = async (id: string) => {
-    try {
-      const response = await fetch(`http://localhost:5000/api/speakers/${id}`, {
-        method: 'DELETE',
-      });
-      if (!response.ok) {
-        throw new Error('删除失败');
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(chunksRef.current, { type: 'audio/wav' });
+          const url = URL.createObjectURL(blob);
+          setAudioUrl(url);
+          setIsRecording(false);
+        };
+
+        mediaRecorder.start();
+        setIsRecording(true);
+      } catch (err) {
+        console.error('Error accessing microphone:', err);
       }
-      // 重新获取列表
-      await fetchSpeakers();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '删除失败');
+    };
+
+    const stopRecording = () => {
+      if (mediaRecorderRef.current && isRecording) {
+        mediaRecorderRef.current.stop();
+        mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
+      }
+    };
+
+    const handleUploadClick = () => {
+      fileInputRef.current?.click();
+    };
+
+    const handleDelete = async (id: string) => {
+      try {
+        const response = await fetch(`http://localhost:5000/api/speakers/${id}`, {
+          method: 'DELETE',
+        });
+        if (!response.ok) {
+          throw new Error('删除失败');
+        }
+        // 重新获取列表
+        await fetchSpeakers();
+      } catch (err) {
+        setError(err instanceof Error ? err.message : '删除失败');
+      }
+    };
+
+    if (isLoading) {
+      return <div className="flex justify-center items-center h-screen">加载中...</div>;
     }
-  };
 
-  if (isLoading) {
-    return <div className="flex justify-center items-center h-screen">加载中...</div>;
-  }
-
-  if (error) {
-    return <div className="text-red-500 text-center p-4">{error}</div>;
+    if (error) {
+      return <div className="text-red-500 text-center p-4">{error}</div>;
   }
 
   return (
@@ -306,10 +474,12 @@ export default function SpeakerPage() {
                     <input
                       type="text"
                       value={editValue}
-                      onChange={(e) => setEditValue(e.target.value)}
+                      onChange={(e) => {
+                        setNewSpeakerId(e.target.value); // 同时更新显示用的ID
+                        setEditValue(e.target.value)} // 保存用户输入的 ID
+                      }
                       onBlur={() => {
                         setEditingId(null);
-                        setEditValue('');
                       }}
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') {
@@ -321,11 +491,11 @@ export default function SpeakerPage() {
                       autoFocus
                     />
                   ) : (
-                    <span className="text-[19px] text-black">说话人id：{`000${speakers.length + 1}`}</span>
+                    <span className="text-[19px] text-black">说话人id：{newSpeakerId || `000${speakers.length + 1}`}</span>
                   )}
                   <button className="text-black" onClick={() => {
                     setEditingId('new');
-                    setEditValue(`000${speakers.length + 1}`);
+                    setEditValue(newSpeakerId || `000${speakers.length + 1}`);
                   }}>
                     <svg width="26" height="26" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M3.66602 28C3.66602 27.7348 3.77137 27.4804 3.95891 27.2929C4.14645 27.1054 4.4008 27 4.66602 27H28.666C28.9312 27 29.1856 27.1054 29.3731 27.2929C29.5607 27.4804 29.666 27.7348 29.666 28C29.666 28.2652 29.5607 28.5196 29.3731 28.7071C29.1856 28.8946 28.9312 29 28.666 29H4.66602C4.4008 29 4.14645 28.8946 3.95891 28.7071C3.77137 28.5196 3.66602 28.2652 3.66602 28ZM21.13 3C21.2616 3.00003 21.3918 3.02601 21.5133 3.07646C21.6348 3.12691 21.7451 3.20084 21.838 3.294L26.708 8.166C26.8955 8.35353 27.0008 8.60784 27.0008 8.873C27.0008 9.13816 26.8955 9.39247 26.708 9.58L12.918 23.374C12.7306 23.5609 12.4767 23.6659 12.212 23.666H7.33202C7.0668 23.666 6.81245 23.5606 6.62491 23.3731C6.43737 23.1856 6.33202 22.9312 6.33202 22.666V17.814C6.33204 17.6824 6.35803 17.5522 6.40848 17.4307C6.45893 17.3092 6.53285 17.1989 6.62602 17.106L20.422 3.294C20.5149 3.20084 20.6252 3.12691 20.7467 3.07646C20.8682 3.02601 20.9985 3.00003 21.13 3ZM21.13 5.414L8.33402 18.228V21.668H11.798L24.586 8.872L21.13 5.414Z" fill="#9391B1"/>
@@ -342,9 +512,9 @@ export default function SpeakerPage() {
                   onChange={(e) => setSelectedModel(e.target.value)}
                   className="ml-4 bg-[#F5F7FF] text-[#655DE6] px-3 py-1 rounded border border-[#655DE6] focus:outline-none focus:ring-2 focus:ring-[#655DE6] focus:ring-opacity-50"
                 >
-                  <option value="ASV1">ASV1</option>
-                  <option value="ASV2">ASV2</option>
-                  <option value="ASV3">ASV3</option>
+                  <option value="1D-CNN">1D-CNN</option>
+                  <option value="x-Vector">x-Vector</option>
+                  <option value="ASV3">ECAPA-TDNN</option>
                 </select>
               </div>
             </div>
@@ -361,7 +531,7 @@ export default function SpeakerPage() {
                         type="file"
                         ref={fileInputRef}
                         onChange={handleFileUpload}
-                        accept="audio/*"
+                        accept=".wav,.mp3,.flac,audio/wav,audio/mpeg,audio/mp3,audio/flac"  // 原来是 audio/*
                         className="hidden"
                       />
                       <button

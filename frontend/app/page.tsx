@@ -84,12 +84,25 @@ export default function Home() { //导出的默认页面组件，访问 / 时会
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Feature Card 1 */}
-            <Link href="/attack" className="group relative">
+            {/* <Link href="/attack" className="group relative">
               <div className="backdrop-blur-xl bg-white/10 rounded-2xl p-6 shadow-lg/20 hover:shadow-xl/20 transition-all duration-300 transform group-hover:-translate-y-1 border-2 border-white/30">
                 <div className="text-2xl font-semibold text-[#655DE6] mb-4">对抗攻击生成</div>
                 <p className="text-[#28264D]">模拟攻击样本创建，测试系统防御能力</p>
               </div>
-            </Link>
+            </Link> */}
+            {/* 保留可点击效果但不跳转 */}
+            <div 
+              className="group relative cursor-pointer"
+              onClick={() => {
+                // 可以在这里添加点击事件处理
+                console.log('点击了对抗攻击生成');
+              }}
+            >
+              <div className="backdrop-blur-xl bg-white/10 rounded-2xl p-6 shadow-lg/20 hover:shadow-xl/20 transition-all duration-300 transform group-hover:-translate-y-1 border-2 border-white/30">
+                <div className="text-2xl font-semibold text-[#655DE6] mb-4">对抗攻击生成</div>
+                <p className="text-[#28264D]">模拟攻击样本创建，测试系统防御能力</p>
+              </div>
+            </div>
 
             {/* Feature Card 2 */}
             <Link href="/defense" className="group relative">

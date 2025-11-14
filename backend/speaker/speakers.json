@@ -1,1 +1,1 @@
-[{"id": "ac10e155-2652-46df-ad95-bf6ae3e1bb62", "audioUrl": "/api/speakers/ac10e155-2652-46df-ad95-bf6ae3e1bb62/audio", "model": "ASV1", "filename": "ac10e155-2652-46df-ad95-bf6ae3e1bb62_audio.wav"}]
+[{"id": "111", "audioUrl": "/api/speakers/111/audio", "model": "1D-CNN", "filename": "111_audio.wav"}, {"id": "test", "audioUrl": "/api/speakers/test/audio", "model": "1D-CNN", "filename": "test_audio.wav"}]
