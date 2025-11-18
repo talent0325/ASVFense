@@ -1,5 +1,0 @@
-# @package dset
-name: mag_restore
-train: data_prep/mag_mask/tr
-valid:
-test: data_prep/mag_mask/val
