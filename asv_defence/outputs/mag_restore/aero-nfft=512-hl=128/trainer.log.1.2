@@ -1,0 +1,318 @@
+[[36m2025-03-11 19:46:30,211[0m][[34m__main__[0m][[32mINFO[0m] - For logs, checkpoints and samples check /root/asv_defence/outputs/mag_restore/aero-nfft=512-hl=128[0m
+[[36m2025-03-11 19:46:30,352[0m][[34m__main__[0m][[32mINFO[0m] - calling distrib.init[0m
+[[36m2025-03-11 19:46:30,412[0m][[34mtorch.distributed.distributed_c10d[0m][[32mINFO[0m] - Added key: store_based_barrier_key:1 to store for rank: 2[0m
+[[36m2025-03-11 19:46:30,453[0m][[34mtorch.distributed.distributed_c10d[0m][[32mINFO[0m] - Rank 2: Completed store-based barrier for key:store_based_barrier_key:1 with 4 nodes.[0m
+[[36m2025-03-11 19:46:30,454[0m][[34msrc.wandb_logger[0m][[32mINFO[0m] - current path: /root/asv_defence/outputs/mag_restore/aero-nfft=512-hl=128, rank: 2[0m
+[[36m2025-03-11 19:46:35,046[0m][[34m__main__[0m][[32mINFO[0m] - generator structure: Aero, with parameters: 19,432,141[0m
+[[36m2025-03-11 19:46:35,049[0m][[34m__main__[0m][[32mINFO[0m] - Aero(
+  (encoder): ModuleList(
+    (0): HEncLayer(
+      (pre_conv): Conv2d(1, 48, kernel_size=(1, 1), stride=(1, 1))
+      (freq_attn_block): FTB(
+        (conv1): Sequential(
+          (0): Conv2d(48, 5, kernel_size=(1, 1), stride=(1, 1))
+          (1): BatchNorm2d(5, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+        (conv1d): Sequential(
+          (0): Conv1d(1280, 48, kernel_size=(9,), stride=(1,), padding=(4,))
+          (1): BatchNorm1d(48, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+        (freq_fc): Linear(in_features=256, out_features=256, bias=False)
+        (conv2): Sequential(
+          (0): Conv2d(96, 48, kernel_size=(1, 1), stride=(1, 1))
+          (1): BatchNorm2d(48, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+      )
+      (conv): Conv2d(48, 48, kernel_size=(8, 1), stride=(4, 1), padding=(2, 0))
+      (norm1): Identity()
+      (rewrite): Conv2d(48, 96, kernel_size=(1, 1), stride=(1, 1))
+      (norm2): Identity()
+      (dconv): DConv(
+        (layers): ModuleList(
+          (0): ModuleDict(
+            (conv1): Sequential(
+              (0): Conv1d(48, 12, kernel_size=(3,), stride=(1,), padding=(1,))
+              (1): GroupNorm(1, 12, eps=1e-05, affine=True)
+            )
+            (act): Snake(in_features=[64])
+            (conv2): Sequential(
+              (0): Conv1d(12, 96, kernel_size=(1,), stride=(1,))
+              (1): GroupNorm(1, 96, eps=1e-05, affine=True)
+              (2): GLU(dim=1)
+              (3): LayerScale()
+            )
+          )
+          (1): ModuleDict(
+            (conv1): Sequential(
+              (0): Conv1d(48, 12, kernel_size=(3,), stride=(1,), padding=(2,), dilation=(2,))
+              (1): GroupNorm(1, 12, eps=1e-05, affine=True)
+            )
+            (act): Snake(in_features=[64])
+            (conv2): Sequential(
+              (0): Conv1d(12, 96, kernel_size=(1,), stride=(1,))
+              (1): GroupNorm(1, 96, eps=1e-05, affine=True)
+              (2): GLU(dim=1)
+              (3): LayerScale()
+            )
+          )
+        )
+      )
+    )
+    (1): HEncLayer(
+      (freq_attn_block): FTB(
+        (conv1): Sequential(
+          (0): Conv2d(48, 5, kernel_size=(1, 1), stride=(1, 1))
+          (1): BatchNorm2d(5, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+        (conv1d): Sequential(
+          (0): Conv1d(320, 48, kernel_size=(9,), stride=(1,), padding=(4,))
+          (1): BatchNorm1d(48, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+        (freq_fc): Linear(in_features=64, out_features=64, bias=False)
+        (conv2): Sequential(
+          (0): Conv2d(96, 48, kernel_size=(1, 1), stride=(1, 1))
+          (1): BatchNorm2d(48, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+      )
+      (conv): Conv2d(48, 96, kernel_size=(8, 1), stride=(4, 1), padding=(2, 0))
+      (norm1): Identity()
+      (rewrite): Conv2d(96, 192, kernel_size=(1, 1), stride=(1, 1))
+      (norm2): Identity()
+      (dconv): DConv(
+        (layers): ModuleList(
+          (0): ModuleDict(
+            (conv1): Sequential(
+              (0): Conv1d(96, 24, kernel_size=(3,), stride=(1,), padding=(1,))
+              (1): GroupNorm(1, 24, eps=1e-05, affine=True)
+            )
+            (act): Snake(in_features=[16])
+            (conv2): Sequential(
+              (0): Conv1d(24, 192, kernel_size=(1,), stride=(1,))
+              (1): GroupNorm(1, 192, eps=1e-05, affine=True)
+              (2): GLU(dim=1)
+              (3): LayerScale()
+            )
+          )
+          (1): ModuleDict(
+            (conv1): Sequential(
+              (0): Conv1d(96, 24, kernel_size=(3,), stride=(1,), padding=(2,), dilation=(2,))
+              (1): GroupNorm(1, 24, eps=1e-05, affine=True)
+            )
+            (act): Snake(in_features=[16])
+            (conv2): Sequential(
+              (0): Conv1d(24, 192, kernel_size=(1,), stride=(1,))
+              (1): GroupNorm(1, 192, eps=1e-05, affine=True)
+              (2): GLU(dim=1)
+              (3): LayerScale()
+            )
+          )
+        )
+      )
+    )
+    (2): HEncLayer(
+      (freq_attn_block): FTB(
+        (conv1): Sequential(
+          (0): Conv2d(96, 5, kernel_size=(1, 1), stride=(1, 1))
+          (1): BatchNorm2d(5, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+        (conv1d): Sequential(
+          (0): Conv1d(80, 96, kernel_size=(9,), stride=(1,), padding=(4,))
+          (1): BatchNorm1d(96, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+        (freq_fc): Linear(in_features=16, out_features=16, bias=False)
+        (conv2): Sequential(
+          (0): Conv2d(192, 96, kernel_size=(1, 1), stride=(1, 1))
+          (1): BatchNorm2d(96, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+      )
+      (conv): Conv2d(96, 192, kernel_size=(8, 1), stride=(2, 1), padding=(3, 0))
+      (norm1): GroupNorm(4, 192, eps=1e-05, affine=True)
+      (rewrite): Conv2d(192, 384, kernel_size=(1, 1), stride=(1, 1))
+      (norm2): GroupNorm(4, 384, eps=1e-05, affine=True)
+      (dconv): DConv(
+        (layers): ModuleList(
+          (0): ModuleDict(
+            (conv1): Sequential(
+              (0): Conv1d(192, 48, kernel_size=(3,), stride=(1,), padding=(1,))
+              (1): GroupNorm(1, 48, eps=1e-05, affine=True)
+            )
+            (act): Snake(in_features=[8])
+            (conv2): Sequential(
+              (0): Conv1d(48, 384, kernel_size=(1,), stride=(1,))
+              (1): GroupNorm(1, 384, eps=1e-05, affine=True)
+              (2): GLU(dim=1)
+              (3): LayerScale()
+            )
+            (lstm): BLSTM(
+              (lstm): LSTM(48, 48, num_layers=2, bidirectional=True)
+              (linear): Linear(in_features=96, out_features=48, bias=True)
+            )
+            (time_attn): LocalState(
+              (content): Conv1d(48, 48, kernel_size=(1,), stride=(1,))
+              (query): Conv1d(48, 48, kernel_size=(1,), stride=(1,))
+              (key): Conv1d(48, 48, kernel_size=(1,), stride=(1,))
+              (query_decay): Conv1d(48, 16, kernel_size=(1,), stride=(1,))
+              (proj): Conv1d(48, 48, kernel_size=(1,), stride=(1,))
+            )
+          )
+          (1): ModuleDict(
+            (conv1): Sequential(
+              (0): Conv1d(192, 48, kernel_size=(3,), stride=(1,), padding=(2,), dilation=(2,))
+              (1): GroupNorm(1, 48, eps=1e-05, affine=True)
+            )
+            (act): Snake(in_features=[8])
+            (conv2): Sequential(
+              (0): Conv1d(48, 384, kernel_size=(1,), stride=(1,))
+              (1): GroupNorm(1, 384, eps=1e-05, affine=True)
+              (2): GLU(dim=1)
+              (3): LayerScale()
+            )
+            (lstm): BLSTM(
+              (lstm): LSTM(48, 48, num_layers=2, bidirectional=True)
+              (linear): Linear(in_features=96, out_features=48, bias=True)
+            )
+            (time_attn): LocalState(
+              (content): Conv1d(48, 48, kernel_size=(1,), stride=(1,))
+              (query): Conv1d(48, 48, kernel_size=(1,), stride=(1,))
+              (key): Conv1d(48, 48, kernel_size=(1,), stride=(1,))
+              (query_decay): Conv1d(48, 16, kernel_size=(1,), stride=(1,))
+              (proj): Conv1d(48, 48, kernel_size=(1,), stride=(1,))
+            )
+          )
+        )
+      )
+    )
+    (3): HEncLayer(
+      (freq_attn_block): FTB(
+        (conv1): Sequential(
+          (0): Conv2d(192, 5, kernel_size=(1, 1), stride=(1, 1))
+          (1): BatchNorm2d(5, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+        (conv1d): Sequential(
+          (0): Conv1d(40, 192, kernel_size=(9,), stride=(1,), padding=(4,))
+          (1): BatchNorm1d(192, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+        (freq_fc): Linear(in_features=8, out_features=8, bias=False)
+        (conv2): Sequential(
+          (0): Conv2d(384, 192, kernel_size=(1, 1), stride=(1, 1))
+          (1): BatchNorm2d(192, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+      )
+      (conv): Conv2d(192, 384, kernel_size=(8, 1), stride=(2, 1), padding=(3, 0))
+      (norm1): GroupNorm(4, 384, eps=1e-05, affine=True)
+      (rewrite): Conv2d(384, 768, kernel_size=(1, 1), stride=(1, 1))
+      (norm2): GroupNorm(4, 768, eps=1e-05, affine=True)
+      (dconv): DConv(
+        (layers): ModuleList(
+          (0): ModuleDict(
+            (conv1): Sequential(
+              (0): Conv1d(384, 96, kernel_size=(3,), stride=(1,), padding=(1,))
+              (1): GroupNorm(1, 96, eps=1e-05, affine=True)
+            )
+            (act): Snake(in_features=[4])
+            (conv2): Sequential(
+              (0): Conv1d(96, 768, kernel_size=(1,), stride=(1,))
+              (1): GroupNorm(1, 768, eps=1e-05, affine=True)
+              (2): GLU(dim=1)
+              (3): LayerScale()
+            )
+            (lstm): BLSTM(
+              (lstm): LSTM(96, 96, num_layers=2, bidirectional=True)
+              (linear): Linear(in_features=192, out_features=96, bias=True)
+            )
+            (time_attn): LocalState(
+              (content): Conv1d(96, 96, kernel_size=(1,), stride=(1,))
+              (query): Conv1d(96, 96, kernel_size=(1,), stride=(1,))
+              (key): Conv1d(96, 96, kernel_size=(1,), stride=(1,))
+              (query_decay): Conv1d(96, 16, kernel_size=(1,), stride=(1,))
+              (proj): Conv1d(96, 96, kernel_size=(1,), stride=(1,))
+            )
+          )
+          (1): ModuleDict(
+            (conv1): Sequential(
+              (0): Conv1d(384, 96, kernel_size=(3,), stride=(1,), padding=(2,), dilation=(2,))
+              (1): GroupNorm(1, 96, eps=1e-05, affine=True)
+            )
+            (act): Snake(in_features=[4])
+            (conv2): Sequential(
+              (0): Conv1d(96, 768, kernel_size=(1,), stride=(1,))
+              (1): GroupNorm(1, 768, eps=1e-05, affine=True)
+              (2): GLU(dim=1)
+              (3): LayerScale()
+            )
+            (lstm): BLSTM(
+              (lstm): LSTM(96, 96, num_layers=2, bidirectional=True)
+              (linear): Linear(in_features=192, out_features=96, bias=True)
+            )
+            (time_attn): LocalState(
+              (content): Conv1d(96, 96, kernel_size=(1,), stride=(1,))
+              (query): Conv1d(96, 96, kernel_size=(1,), stride=(1,))
+              (key): Conv1d(96, 96, kernel_size=(1,), stride=(1,))
+              (query_decay): Conv1d(96, 16, kernel_size=(1,), stride=(1,))
+              (proj): Conv1d(96, 96, kernel_size=(1,), stride=(1,))
+            )
+          )
+        )
+      )
+    )
+  )
+  (decoder): ModuleList(
+    (0): HDecLayer(
+      (conv_tr): ConvTranspose2d(768, 192, kernel_size=(8, 1), stride=(2, 1))
+      (norm2): GroupNorm(4, 192, eps=1e-05, affine=True)
+      (rewrite): Conv2d(768, 1536, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (norm1): GroupNorm(4, 1536, eps=1e-05, affine=True)
+    )
+    (1): HDecLayer(
+      (conv_tr): ConvTranspose2d(384, 96, kernel_size=(8, 1), stride=(2, 1))
+      (norm2): GroupNorm(4, 96, eps=1e-05, affine=True)
+      (rewrite): Conv2d(384, 768, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (norm1): GroupNorm(4, 768, eps=1e-05, affine=True)
+    )
+    (2): HDecLayer(
+      (conv_tr): ConvTranspose2d(192, 48, kernel_size=(8, 1), stride=(4, 1))
+      (norm2): Identity()
+      (rewrite): Conv2d(192, 384, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (norm1): Identity()
+    )
+    (3): HDecLayer(
+      (conv_tr): ConvTranspose2d(96, 1, kernel_size=(8, 1), stride=(4, 1))
+      (norm2): Identity()
+      (rewrite): Conv2d(96, 192, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (norm1): Identity()
+    )
+  )
+  (freq_emb): ScaledEmbedding(
+    (embedding): Embedding(64, 48)
+  )
+)[0m
+[[36m2025-03-11 19:46:44,014[0m][[34msrc.solver[0m][[32mINFO[0m] - Loading checkpoint model: checkpoint.th[0m
+[[36m2025-03-11 19:47:03,714[0m][[34msrc.solver[0m][[32mINFO[0m] - Replaying metrics from previous run[0m
+[[36m2025-03-11 19:47:03,716[0m][[34msrc.solver[0m][[32mINFO[0m] - Epoch 1: Total_loss=6.08928 Evaluation_loss=6.08928 Generator_l1_loss=6.08928[0m
+[[36m2025-03-11 19:47:03,716[0m][[34msrc.solver[0m][[32mINFO[0m] - Epoch 2: Total_loss=4.88777 Evaluation_loss=4.88777 Generator_l1_loss=4.88777[0m
+[[36m2025-03-11 19:47:03,716[0m][[34msrc.solver[0m][[32mINFO[0m] - Epoch 3: Total_loss=4.56209 Evaluation_loss=4.56209 Generator_l1_loss=4.56209[0m
+[[36m2025-03-11 19:47:03,717[0m][[34msrc.solver[0m][[32mINFO[0m] - Epoch 4: Total_loss=4.30958 Evaluation_loss=4.30958 Generator_l1_loss=4.30958[0m
+[[36m2025-03-11 19:47:03,717[0m][[34msrc.solver[0m][[32mINFO[0m] - Epoch 5: Total_loss=4.15073 Evaluation_loss=4.15073 Generator_l1_loss=4.15073[0m
+[[36m2025-03-11 19:47:03,717[0m][[34msrc.solver[0m][[32mINFO[0m] - Epoch 6: Total_loss=4.05891 Evaluation_loss=4.05891 Generator_l1_loss=4.05891[0m
+[[36m2025-03-11 19:47:03,717[0m][[34msrc.solver[0m][[32mINFO[0m] - Epoch 7: Total_loss=3.92567 Evaluation_loss=3.92567 Generator_l1_loss=3.92567[0m
+[[36m2025-03-11 19:47:03,717[0m][[34msrc.solver[0m][[32mINFO[0m] - Epoch 8: Total_loss=3.84596 Evaluation_loss=3.84596 Generator_l1_loss=3.84596[0m
+[[36m2025-03-11 19:47:03,718[0m][[34msrc.solver[0m][[32mINFO[0m] - Epoch 9: Total_loss=3.80228 Evaluation_loss=3.80228 Generator_l1_loss=3.80228[0m
+[[36m2025-03-11 19:47:03,718[0m][[34msrc.solver[0m][[32mINFO[0m] - Epoch 10: Total_loss=3.72010 Evaluation_loss=3.72010 Generator_l1_loss=3.72010[0m
+[[36m2025-03-11 19:47:03,718[0m][[34msrc.solver[0m][[32mINFO[0m] - ----------------------------------------------------------------------[0m
+[[36m2025-03-11 19:47:03,718[0m][[34msrc.solver[0m][[32mINFO[0m] - Trainable Params:[0m
+[[36m2025-03-11 19:47:03,722[0m][[34msrc.solver[0m][[32mINFO[0m] - generator: parameters: 19432141, size: 74.12773513793945 MB[0m
+[[36m2025-03-11 19:47:03,770[0m][[34msrc.solver[0m][[32mINFO[0m] - ----------------------------------------------------------------------[0m
+[[36m2025-03-11 19:47:03,770[0m][[34msrc.solver[0m][[32mINFO[0m] - Training...[0m
+[[36m2025-03-11 19:47:19,303[0m][[34mtorch.nn.parallel.distributed[0m][[32mINFO[0m] - Reducer buckets have been rebuilt in this iteration.[0m

@@ -1,0 +1,4 @@
+- dset=mag_restore
+- experiment=mag
+- +filename=/data1/asv_defense/asv_defence/adv_audio/adver-3000-2830-260-123440-0011.wav
+- +output=/data1/asv_defense/asv_defence/defend_audio/

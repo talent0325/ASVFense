@@ -1,0 +1,10 @@
+[[36m2025-05-30 12:56:23,090[0m][[34m__main__[0m][[32mINFO[0m] - [1mLoading model aero from last state.[0m
+[[36m2025-05-30 12:56:24,650[0m][[34m__main__[0m][[32mINFO[0m] - lr wav shape: torch.Size([1, 112960])[0m
+[[36m2025-05-30 12:56:24,650[0m][[34m__main__[0m][[32mINFO[0m] - number of chunks: 1[0m
+[[36m2025-05-30 12:56:25,977[0m][[34m__main__[0m][[32mINFO[0m] - prediction duration: 1.3269853591918945[0m
+[[36m2025-05-30 12:56:25,978[0m][[34m__main__[0m][[32mINFO[0m] - pr wav shape: (256, 883)[0m
+[[36m2025-05-30 12:56:26,446[0m][[34m__main__[0m][[32mINFO[0m] - [1mLoading model aero from last state.[0m
+[[36m2025-05-30 12:56:26,478[0m][[34m__main__[0m][[32mINFO[0m] - lr wav shape: torch.Size([1, 77920])[0m
+[[36m2025-05-30 12:56:26,478[0m][[34m__main__[0m][[32mINFO[0m] - number of chunks: 1[0m
+[[36m2025-05-30 12:56:26,513[0m][[34m__main__[0m][[32mINFO[0m] - prediction duration: 0.034291982650756836[0m
+[[36m2025-05-30 12:56:26,513[0m][[34m__main__[0m][[32mINFO[0m] - pr wav shape: (256, 609)[0m
